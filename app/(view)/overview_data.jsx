@@ -4,7 +4,8 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert,
 } from "react-native";
 import { styled } from "nativewind";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -15,6 +16,7 @@ import {
 import { request } from "../../lib/Require";
 import { router } from "expo-router";
 import moment from "moment";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -37,6 +39,7 @@ const Overview = () => {
     "Date Of Planting",
     "Date Of Harvesting",
     "Estimate Product",
+    "Action",
   ];
 
   useEffect(() => {
@@ -183,6 +186,38 @@ const Overview = () => {
                 <View>
                   <Text>{rowData.estimated_product}</Text>
                 </View>
+              </StyledText>
+              <StyledText
+                style={styles.cell}
+                className="text-center bg-green-300 "
+              >
+                <TouchableOpacity
+                  onPress={() => {
+                    Alert.alert(
+                      "Delete",
+                      "Are you sure you want to remove this data?",
+                      [
+                        {
+                          text: "Cancel",
+                          style: "cancel",
+                        },
+                        {
+                          text: "Ok",
+                          onPress: async () => {
+                            await request("vegetable_detail/delete", "delete", {
+                              vegetable_detail_id: rowData.vegetable_detail_id,
+                            });
+                            getOverviewData();
+                          },
+                        },
+                      ],
+                      { cancelable: true }
+                    );
+                  }}
+                  className="p-[5px] rounded-xl justify-center items-center"
+                >
+                  <AntDesign name="delete" size={hp(3)} color="red" />
+                </TouchableOpacity>
               </StyledText>
             </StyledView>
           ))}
