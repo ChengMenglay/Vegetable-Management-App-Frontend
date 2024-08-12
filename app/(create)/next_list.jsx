@@ -3,7 +3,6 @@ import {
   Text,
   TextInput,
   StyleSheet,
-  Platform,
   TouchableOpacity,
   ScrollView,
   Alert,

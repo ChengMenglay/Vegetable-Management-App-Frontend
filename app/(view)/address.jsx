@@ -17,7 +17,6 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { request } from "../../lib/Require";
-import { Picker } from "@react-native-picker/picker";
 const StyledView = styled(View);
 const StyledText = styled(Text);
 

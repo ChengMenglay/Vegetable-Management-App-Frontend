@@ -4,20 +4,15 @@ import {
   View,
   Text,
   StyleSheet,
-  Modal,
-  TextInput,
-  TouchableOpacity,
-  Alert,
+  TouchableOpacity
 } from "react-native";
 import { styled } from "nativewind";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { request } from "../../lib/Require";
-import { Picker } from "@react-native-picker/picker";
 import { router } from "expo-router";
 import moment from "moment";
 

@@ -6,7 +6,6 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import axios from "axios";
 import { router } from "expo-router";
 import { request } from "../../lib/Require";
 const Login = () => {
