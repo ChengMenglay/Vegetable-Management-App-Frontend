@@ -19,6 +19,7 @@ import {
 import { request } from "../../lib/Require";
 import { Picker } from "@react-native-picker/picker";
 import { router } from "expo-router";
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -33,6 +34,7 @@ const DF = () => {
   });
   const [address, setAddress] = useState([]);
   const [tableData, setTableData] = useState([]);
+  const { accessToken } = useGlobalContext();
   const tableHead = [
     "No.",
     "DF Name",
@@ -59,14 +61,14 @@ const DF = () => {
   };
 
   const getDFData = async () => {
-    const response = await request("df/get", "get");
+    const response = await request("df/get", "get",{},accessToken);
     if (response.data) {
       setTableData(response.data);
     }
   };
 
   const getAddressData = async () => {
-    const response = await request("address/get", "get");
+    const response = await request("address/get", "get",{},accessToken);
     if (response.data) {
       setAddress(response.data);
     }
@@ -77,7 +79,7 @@ const DF = () => {
         df_name: formCreate.df_name,
         address_id: formCreate.address_id,
         df_id: formCreate.df_id,
-      });
+      },accessToken);
       if (response) {
         getDFData();
       }
@@ -93,7 +95,7 @@ const DF = () => {
       const response = await request("df/create", "post", {
         df_name: formCreate.df_name,
         address_id: formCreate.address_id,
-      });
+      },accessToken);
       if (response) {
         getDFData();
       }

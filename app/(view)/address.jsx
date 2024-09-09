@@ -17,6 +17,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { request } from "../../lib/Require";
+import { useGlobalContext } from "../../context/GlobalProvider";
 const StyledView = styled(View);
 const StyledText = styled(Text);
 
@@ -30,6 +31,7 @@ const Address = () => {
     district: "",
     province: "",
   });
+  const { accessToken } = useGlobalContext();
   const [address, setAddress] = useState([]);
   const tableHead = [
     "No.",
@@ -54,20 +56,25 @@ const Address = () => {
     });
   };
   const getAddressData = async () => {
-    const response = await request("address/get", "get");
+    const response = await request("address/get", "get", {}, accessToken);
     if (response.data) {
       setAddress(response.data);
     }
   };
   const handleUpdateForm = async () => {
     try {
-      const response = await request("address/update", "put", {
-        village: formCreate.village,
-        commune: formCreate.commune,
-        address_id: formCreate.address_id,
-        district: formCreate.district,
-        province: formCreate.province,
-      });
+      const response = await request(
+        "address/update",
+        "put",
+        {
+          village: formCreate.village,
+          commune: formCreate.commune,
+          address_id: formCreate.address_id,
+          district: formCreate.district,
+          province: formCreate.province,
+        },
+        accessToken
+      );
       if (response) {
         getAddressData();
       }
@@ -79,12 +86,17 @@ const Address = () => {
   };
   const handleCreateform = async () => {
     try {
-      const response = await request("address/create", "post", {
-        village: formCreate.village,
-        commune: formCreate.commune,
-        district: formCreate.district,
-        province: formCreate.province,
-      });
+      const response = await request(
+        "address/create",
+        "post",
+        {
+          village: formCreate.village,
+          commune: formCreate.commune,
+          district: formCreate.district,
+          province: formCreate.province,
+        },
+        accessToken
+      );
       if (response) {
         getAddressData();
       }

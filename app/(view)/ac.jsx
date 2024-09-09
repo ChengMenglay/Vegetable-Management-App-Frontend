@@ -19,6 +19,7 @@ import {
 import { request } from "../../lib/Require";
 import { Picker } from "@react-native-picker/picker";
 import { router } from "expo-router";
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -32,6 +33,7 @@ const AC = () => {
     address_id: null,
     ac_id: null,
   });
+  const { accessToken } = useGlobalContext();
   const [address, setAddress] = useState([]);
   const [tableData, setTableData] = useState([]);
   const tableHead = [
@@ -61,14 +63,14 @@ const AC = () => {
   };
 
   const getACData = async () => {
-    const response = await request("ac/get", "get");
+    const response = await request("ac/get", "get",{},accessToken);
     if (response.data) {
       setTableData(response.data);
     }
   };
 
   const getAddressData = async () => {
-    const response = await request("address/get", "get");
+    const response = await request("address/get", "get",{},accessToken);
     if (response.data) {
       setAddress(response.data);
     }
@@ -80,7 +82,7 @@ const AC = () => {
         last_name: formCreate.last_name,
         address_id: formCreate.address_id,
         ac_id: formCreate.ac_id,
-      });
+      },accessToken);
       if (response) {
         getACData();
       }
@@ -97,7 +99,7 @@ const AC = () => {
         first_name: formCreate.first_name,
         last_name: formCreate.last_name,
         address_id: formCreate.address_id,
-      });
+      },accessToken);
       if (response) {
         getACData();
       }

@@ -1,4 +1,11 @@
-import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  ScrollView,
+} from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
@@ -8,7 +15,9 @@ import {
 } from "react-native-responsive-screen";
 import { router } from "expo-router";
 import { request } from "../../lib/Require";
+import { useGlobalContext } from "../../context/GlobalProvider";
 const Login = () => {
+  const { setAccessToken } = useGlobalContext();
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -27,6 +36,7 @@ const Login = () => {
       password: form.password,
     });
     if (data.message == "Login successfully!") {
+      setAccessToken(data.access_token);
       Alert.alert(
         "Login",
         data.message,
@@ -44,7 +54,7 @@ const Login = () => {
     }
   };
   return (
-    <SafeAreaView className="flex-1 p-4">
+    <ScrollView className="flex-1 p-4">
       <View className="items-center">
         <Image
           style={{ width: wp(60), height: wp(60) }}
@@ -85,7 +95,7 @@ const Login = () => {
           Log in
         </Text>
       </TouchableOpacity>
-    </SafeAreaView>
+    </ScrollView>
   );
 };
 

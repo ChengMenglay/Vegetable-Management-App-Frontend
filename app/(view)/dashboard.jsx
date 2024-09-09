@@ -1,5 +1,5 @@
 import { View, Text, FlatList, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import {
@@ -8,6 +8,7 @@ import {
 } from "react-native-responsive-screen";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 const GridItem = ({ item }) => {
   return (

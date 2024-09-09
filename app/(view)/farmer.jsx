@@ -19,6 +19,7 @@ import {
 import { request } from "../../lib/Require";
 import { Picker } from "@react-native-picker/picker";
 import { router } from "expo-router";
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -34,6 +35,7 @@ const Farmer = () => {
   });
   const [address, setAddress] = useState([]);
   const [tableData, setTableData] = useState([]);
+  const { accessToken } = useGlobalContext();
   const tableHead = [
     "No.",
     "Farmer Name",
@@ -61,14 +63,14 @@ const Farmer = () => {
   };
 
   const getFarmerData = async () => {
-    const response = await request("farmer/get", "get");
+    const response = await request("farmer/get", "get",{},accessToken);
     if (response.data) {
       setTableData(response.data);
     }
   };
 
   const getAddressData = async () => {
-    const response = await request("address/get", "get");
+    const response = await request("address/get", "get",{},accessToken);
     if (response.data) {
       setAddress(response.data);
     }
@@ -80,7 +82,7 @@ const Farmer = () => {
         last_name: formCreate.last_name,
         address_id: formCreate.address_id,
         farmer_id: formCreate.farmer_id,
-      });
+      },accessToken);
       if (response) {
         getFarmerData();
       }
@@ -97,7 +99,7 @@ const Farmer = () => {
         first_name: formCreate.first_name,
         last_name: formCreate.last_name,
         address_id: formCreate.address_id,
-      });
+      },accessToken);
       if (response) {
         getFarmerData();
       }

@@ -6,6 +6,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
+  Modal,
+  TextInput,
 } from "react-native";
 import { styled } from "nativewind";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -17,12 +19,15 @@ import { request } from "../../lib/Require";
 import { router } from "expo-router";
 import moment from "moment";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { useGlobalContext } from "../../context/GlobalProvider";
+import { Picker } from "@react-native-picker/picker";
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
 
 const Overview = () => {
   const [tableData, setTableData] = useState([]);
+  const { accessToken } = useGlobalContext();
   const tableHead = [
     "No.",
     "Farmer Name",
@@ -45,9 +50,13 @@ const Overview = () => {
   useEffect(() => {
     getOverviewData();
   }, []);
-
   const getOverviewData = async () => {
-    const response = await request("vegetable_detail/get", "get");
+    const response = await request(
+      "vegetable_detail/get",
+      "get",
+      {},
+      accessToken
+    );
     if (response.data) {
       setTableData(response.data);
     }
@@ -189,8 +198,36 @@ const Overview = () => {
               </StyledText>
               <StyledText
                 style={styles.cell}
-                className="text-center bg-green-300 "
+                className="text-center bg-green-300 flex-row gap-x-2"
               >
+                <TouchableOpacity
+                  onPress={() => {
+                    router.push({
+                      pathname: "create_list",
+                      params: {
+                        farmer_id: rowData.farmer_id,
+                        ac_id: rowData.ac_id,
+                        df_id: rowData.df_id,
+                        address_id: rowData.address_id,
+                        vegetable_detail_id: rowData.vegetable_detail_id,
+                        vegetable_processing_id:
+                          rowData.vegetable_processing_id,
+                        vegetable_id: rowData.vegetable_id,
+                        vegetable_growing: rowData.vegetable_growing,
+                        land_vegetable_cultivation:
+                          rowData.land_vegetable_cultivation,
+                        date_of_seeding: rowData.date_of_seeding,
+                        date_of_planting: rowData.date_of_planting,
+                        date_of_harvesting: rowData.date_of_harvesting,
+                        estimated_product: rowData.estimated_product,
+                        type: "Update",
+                      },
+                    });
+                  }}
+                  className="p-1 rounded-xl justify-center items-center"
+                >
+                  <AntDesign name="edit" size={hp(3)} color={"#ee9b00"} />
+                </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
                     Alert.alert(
@@ -204,9 +241,17 @@ const Overview = () => {
                         {
                           text: "Ok",
                           onPress: async () => {
-                            await request("vegetable_detail/delete", "delete", {
-                              vegetable_detail_id: rowData.vegetable_detail_id,
-                            });
+                            await request(
+                              "vegetable_detail/delete",
+                              "delete",
+                              {
+                                vegetable_detail_id:
+                                  rowData.vegetable_detail_id,
+                                vegetable_processing_id:
+                                  rowData.vegetable_processing_id,
+                              },
+                              accessToken
+                            );
                             getOverviewData();
                           },
                         },

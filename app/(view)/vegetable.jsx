@@ -17,6 +17,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { request } from "../../lib/Require";
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -30,6 +31,7 @@ const Vegetable = () => {
   });
   const [tableData, setTableData] = useState([]);
   const tableHead = ["No.", "Vegetable Name", "Update"];
+  const { accessToken } = useGlobalContext();
 
   useEffect(() => {
     getVegetableData();
@@ -45,7 +47,7 @@ const Vegetable = () => {
   };
 
   const getVegetableData = async () => {
-    const response = await request("vegetable/get", "get");
+    const response = await request("vegetable/get", "get",{},accessToken);
     if (response.data) {
       setTableData(response.data);
     }
@@ -55,7 +57,7 @@ const Vegetable = () => {
       const response = await request("vegetable/update", "put", {
         vegetable_name: formCreate.vegetable_name,
         vegetable_id: formCreate.vegetable_id,
-      });
+      },accessToken);
       if (response) {
         getVegetableData();
       }
@@ -70,7 +72,7 @@ const Vegetable = () => {
     try {
       const response = await request("vegetable/create", "post", {
         vegetable_name: formCreate.vegetable_name,
-      });
+      },accessToken);
       if (response) {
         getVegetableData();
       }

@@ -17,6 +17,7 @@ import { router } from "expo-router";
 import { useRoute } from "@react-navigation/native";
 import { request } from "../../lib/Require";
 import moment from "moment";
+import { useGlobalContext } from "../../context/GlobalProvider";
 const NextList = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDateType, setSelectedDateType] = useState(null);
@@ -26,24 +27,25 @@ const NextList = () => {
   const [date_of_harvesting, setDateOfHarvesting] = useState(new Date());
   const { params } = useRoute();
   const [form, setForm] = useState({
-    farmer_id: params.farmer_id,
-    ac_id: params.ac_id,
-    address_id: params.address_id,
-    df_id: params.df_id,
-    vegetable_id: null,
-    vegetable_growing: "",
-    land_vegetable_cultivation: "",
-    date_of_seeding: "",
-    date_of_planting: "",
-    date_of_harvesting: "",
-    estimated_product: "",
+    farmer_id: params?.farmer_id,
+    ac_id: params?.ac_id,
+    address_id: params?.address_id,
+    df_id: params?.df_id,
+    vegetable_id: parseInt(params?.vegetable_id) || null,
+    vegetable_growing: params?.vegetable_growing || "",
+    land_vegetable_cultivation: params?.land_vegetable_cultivation || "",
+    date_of_seeding: params.date_of_seeding || "",
+    date_of_planting: params.date_of_planting || "",
+    date_of_harvesting: params.date_of_harvesting || "",
+    estimated_product: params.estimated_product || "",
   });
+  const { accessToken } = useGlobalContext();
   useEffect(() => {
     // console.log(params);
     getVegetableData();
   }, []);
   const getVegetableData = async () => {
-    const response = await request("vegetable/get", "get");
+    const response = await request("vegetable/get", "get", {}, accessToken);
     if (response.data) {
       setVegetable(response.data);
     }
@@ -98,27 +100,65 @@ const NextList = () => {
           date_of_planting: form.date_of_planting,
           date_of_harvesting: form.date_of_harvesting,
           estimated_product: form.estimated_product,
-        }
+        },
+        accessToken
       );
       if (vegetable_process && vegetable_process.data) {
-        const response = await request("vegetable_detail/create", "post", {
-          farmer_id: form.farmer_id,
-          ac_id: form.ac_id,
-          df_id: form.df_id,
-          address_id: form.address_id,
-          vegetable_processing_id:
-            vegetable_process.data.vegetable_processing_id,
-        });
+        const response = await request(
+          "vegetable_detail/create",
+          "post",
+          {
+            farmer_id: form.farmer_id,
+            ac_id: form.ac_id,
+            df_id: form.df_id,
+            address_id: form.address_id,
+            vegetable_processing_id:
+              vegetable_process.data.vegetable_processing_id,
+          },
+          accessToken
+        );
         if (response) {
-          router.replace("/overview_data")
+          router.replace("/overview_data");
         } else {
-          Alert.alert("Error","Insert data to Vegetable Detail was fail!");
+          Alert.alert("Error", "Insert data to Vegetable Detail was fail!");
         }
       } else {
-        Alert.alert("Error","Insert data to Vegetable Processing was fail!");
+        Alert.alert("Error", "Insert data to Vegetable Processing was fail!");
       }
     } catch (error) {
       Alert.alert("Error", error);
+    }
+  };
+  const handleUpdateData = async () => {
+    const updatedVegetaleDetail = await request(
+      "vegetable_detail/update",
+      "put",
+      {
+        farmer_id: form.farmer_id,
+        ac_id: form.ac_id,
+        df_id: form.df_id,
+        address_id: form.address_id,
+        vegetable_processing_id: parseInt(params.vegetable_processing_id),
+        vegetable_detail_id: parseInt(params.vegetable_detail_id),
+        vegetable_id: form.vegetable_id,
+        vegetable_growing: form.vegetable_growing,
+        land_vegetable_cultivation: form.land_vegetable_cultivation,
+        date_of_seeding: moment(form.date_of_seeding).format("YYYY-MM-DD"),
+        date_of_planting: moment(form.date_of_planting).format("YYYY-MM-DD"),
+        date_of_harvesting: moment(form.date_of_harvesting).format(
+          "YYYY-MM-DD"
+        ),
+        estimated_product: form.estimated_product,
+      },
+      accessToken
+    );
+    if (updatedVegetaleDetail) {
+      Alert.alert("Update", "Update Data Successfully!", [
+        {
+          text: "Okay",
+          onPress: () => router.replace("/dashboard"),
+        },
+      ]);
     }
   };
   return (
@@ -296,12 +336,25 @@ const NextList = () => {
             }}
           />
         )}
-        <TouchableOpacity
-          className="w-full h-14 bg-green-500 mt-7 px-4 rounded-lg justify-center items-center"
-          onPress={handleSubmitData}
-        >
-          <Text className="text-white text-lg font-psemibold mt-1">Create</Text>
-        </TouchableOpacity>
+        {params.type == "Update" ? (
+          <TouchableOpacity
+            className="w-full h-14 bg-green-500 mt-7 px-4 rounded-lg justify-center items-center"
+            onPress={handleUpdateData}
+          >
+            <Text className="text-white text-lg font-psemibold mt-1">
+              Update
+            </Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            className="w-full h-14 bg-green-500 mt-7 px-4 rounded-lg justify-center items-center"
+            onPress={handleSubmitData}
+          >
+            <Text className="text-white text-lg font-psemibold mt-1">
+              Create
+            </Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
