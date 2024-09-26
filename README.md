@@ -16,7 +16,7 @@ The Vegetable Management app is developed by using Expo for frontend and express
  npm install
 ```
 
-3. Start the app
+## Start the app
 
 ```bash
  npx expo start
